@@ -1,0 +1,655 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package denguecasereportsystem;
+
+//import classes.DengueCase;
+import classes.DengueCase;
+import helper.Calculation;
+import helper.PrologConnection;
+import helper.XlsxReader;
+import java.awt.Color;
+import java.awt.Frame;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author user
+ */
+public class DengueCaseReportSystem extends javax.swing.JFrame {
+    private final String EXCEL_FILE_PATH_2014_To_2016 = "./src/storage/statistik-"
+            + "kes-denggi-di-negeri-pahang-bagi-tempoh-2014-2017.xlsx";
+    private final String EXCEL_FILE_PATH_2017_To_2019 = "./src/storage/statistik-"
+            + "kes-denggi-di-negeri-pahang-bagi-tempoh-2018-2019.xlsx";
+    private final String PROLOG_FILE_PATH = "./src/storage/quicksort.pl";
+    
+    private Calculation calculation;
+    private LinkedHashMap<String, Integer> totalDengueCasesPerArea;
+
+    public DengueCaseReportSystem() {
+        initComponents();
+        setLocationRelativeTo(null);
+        
+        try {
+            XlsxReader xlsxReader1 = new XlsxReader(EXCEL_FILE_PATH_2014_To_2016);
+            XlsxReader xlsxReader2 = new XlsxReader(EXCEL_FILE_PATH_2017_To_2019);
+            List<DengueCase> dengueCasesData = 
+                    xlsxReader1.combinePartialDengueCasesData(
+                            xlsxReader1.readFile(1), 
+                            xlsxReader2.readFile(2)
+                    );
+
+            calculation = new Calculation();
+             
+            List<DengueCase> newDengueCasesData = 
+                calculation.getTotalCasesPerYear(dengueCasesData);
+            
+            displayOverallDengueCases(newDengueCasesData);
+            
+            totalDengueCasesPerArea = calculation.getTotalCasesPerArea(dengueCasesData);
+            displayTotalDengueCasesPerArea();
+            displayAreaOfLowestDengueCases();
+            displayAreaOfHighestDengueCases();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void displayOverallDengueCases(List<DengueCase> dengueCasesData) {
+        DefaultTableModel overallDengueCasesTableModel = 
+                (DefaultTableModel) TblOverallDengueCases.getModel();
+        dengueCasesData.forEach(dengueCase -> overallDengueCasesTableModel
+                .addRow(
+                    Stream.concat(
+                        Arrays.stream(new Object[]{dengueCase.getDistrictName()}), 
+                        Arrays.stream(dengueCase.getDengueCasePerYear().values().toArray()))
+                    .toArray(Object[]::new)
+                )
+        );
+    }
+    
+    public void displayTotalDengueCasesPerArea() {
+        DefaultTableModel totalDengueCasesPerAreaTableModel = 
+            (DefaultTableModel) TblTotalDengueCasesPerArea.getModel();
+        PnlSort.setBackground(Color.decode("#D23743"));
+        PnlReset.setBackground(Color.decode("#96222A"));
+        totalDengueCasesPerAreaTableModel.setRowCount(0);
+        totalDengueCasesPerArea
+                .entrySet()
+                .stream()
+                .forEach(dengueCasesPerArea -> totalDengueCasesPerAreaTableModel
+                    .addRow(new Object[]{
+                                dengueCasesPerArea.getKey(), 
+                                dengueCasesPerArea.getValue()
+                            }
+                    )
+                );
+    }
+    
+    public void displayAreaOfLowestDengueCases() {
+        DefaultTableModel areaOfLowestDengueCasesTableModel = 
+                (DefaultTableModel) TblAreaOfLowestDengueCases.getModel();
+        calculation.getLowestCasesArea(totalDengueCasesPerArea)
+                .ifPresent(dengueCasesPerArea -> areaOfLowestDengueCasesTableModel
+                    .addRow(new Object[]{
+                        dengueCasesPerArea.getKey(), 
+                        dengueCasesPerArea.getValue()
+                    })
+                );
+    }
+    
+    public void displayAreaOfHighestDengueCases() {
+        DefaultTableModel areaOfHighestDengueCasesTableModel = 
+                (DefaultTableModel) TblAreaOfHighestDengueCases.getModel();
+        calculation.getHighestCasesArea(totalDengueCasesPerArea)
+                .entrySet()
+                .stream()
+                .forEach(dengueCasesPerArea -> areaOfHighestDengueCasesTableModel
+                    .addRow(new Object[]{
+                        dengueCasesPerArea.getKey(), 
+                        dengueCasesPerArea.getValue()
+                    })
+                );
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        sidePnl = new javax.swing.JPanel();
+        pnlHomeButton = new javax.swing.JPanel();
+        lblHome = new javax.swing.JLabel();
+        pnlStatisticsButton = new javax.swing.JPanel();
+        lblStatistics = new javax.swing.JLabel();
+        pnlExitButton = new javax.swing.JPanel();
+        lblExit = new javax.swing.JLabel();
+        pnlTitle = new javax.swing.JPanel();
+        btnMinimise = new javax.swing.JButton();
+        lblTitle = new javax.swing.JLabel();
+        btnClose = new javax.swing.JButton();
+        pnlDisplay = new javax.swing.JPanel();
+        pnlHomeDisplay = new javax.swing.JPanel();
+        SpnHome = new javax.swing.JScrollPane();
+        TblOverallDengueCases = new javax.swing.JTable();
+        pnlStatisticsDisplay = new javax.swing.JPanel();
+        LblTotalDengueCasesPerArea = new javax.swing.JLabel();
+        SpnHome1 = new javax.swing.JScrollPane();
+        TblTotalDengueCasesPerArea = new javax.swing.JTable();
+        LblAreaOfLowestDengueCasesTitle = new javax.swing.JLabel();
+        SpnHome2 = new javax.swing.JScrollPane();
+        TblAreaOfLowestDengueCases = new javax.swing.JTable();
+        SpnHome3 = new javax.swing.JScrollPane();
+        TblAreaOfHighestDengueCases = new javax.swing.JTable();
+        LblAreaOfHighestDengueCasesTitle = new javax.swing.JLabel();
+        PnlSort = new javax.swing.JPanel();
+        LblSort = new javax.swing.JLabel();
+        PnlReset = new javax.swing.JPanel();
+        LblReset = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(220, 250));
+        setUndecorated(true);
+
+        sidePnl.setBackground(new java.awt.Color(29, 62, 93));
+        sidePnl.setMinimumSize(new java.awt.Dimension(220, 100));
+        sidePnl.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        pnlHomeButton.setBackground(new java.awt.Color(150, 34, 42));
+        pnlHomeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                redirectHome(evt);
+            }
+        });
+        pnlHomeButton.setLayout(new javax.swing.BoxLayout(pnlHomeButton, javax.swing.BoxLayout.LINE_AXIS));
+
+        lblHome.setBorder(new javax.swing.border.EmptyBorder(0, 20, 0, 0));
+        lblHome.setBackground(new java.awt.Color(255, 255, 255));
+        lblHome.setFont(new java.awt.Font("Gill Sans MT", 0, 24)); // NOI18N
+        lblHome.setForeground(new java.awt.Color(255, 255, 255));
+        lblHome.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/home.png"))); // NOI18N
+        lblHome.setText("Home");
+        lblHome.setIconTextGap(20);
+        lblHome.setMaximumSize(new java.awt.Dimension(250, 80));
+        lblHome.setMinimumSize(new java.awt.Dimension(250, 80));
+        lblHome.setPreferredSize(new java.awt.Dimension(250, 80));
+        pnlHomeButton.add(lblHome);
+
+        sidePnl.add(pnlHomeButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 80));
+
+        pnlStatisticsButton.setBackground(new java.awt.Color(210, 55, 66));
+        pnlStatisticsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                redirectStatistics(evt);
+            }
+        });
+        pnlStatisticsButton.setLayout(new javax.swing.BoxLayout(pnlStatisticsButton, javax.swing.BoxLayout.LINE_AXIS));
+
+        lblStatistics.setBorder(new javax.swing.border.EmptyBorder(0, 20, 0, 0));
+        lblStatistics.setBackground(new java.awt.Color(255, 255, 255));
+        lblStatistics.setFont(new java.awt.Font("Gill Sans MT", 0, 24)); // NOI18N
+        lblStatistics.setForeground(new java.awt.Color(255, 255, 255));
+        lblStatistics.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblStatistics.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/report.png"))); // NOI18N
+        lblStatistics.setText("Statistics");
+        lblStatistics.setIconTextGap(20);
+        lblStatistics.setMaximumSize(new java.awt.Dimension(250, 80));
+        lblStatistics.setMinimumSize(new java.awt.Dimension(250, 80));
+        lblStatistics.setPreferredSize(new java.awt.Dimension(250, 80));
+        pnlStatisticsButton.add(lblStatistics);
+
+        sidePnl.add(pnlStatisticsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 250, 80));
+
+        pnlExitButton.setBackground(new java.awt.Color(210, 55, 66));
+        pnlExitButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exit(evt);
+            }
+        });
+        pnlExitButton.setLayout(new javax.swing.BoxLayout(pnlExitButton, javax.swing.BoxLayout.LINE_AXIS));
+
+        lblExit.setBorder(new javax.swing.border.EmptyBorder(0, 20, 0, 0));
+        lblExit.setBackground(new java.awt.Color(255, 255, 255));
+        lblExit.setFont(new java.awt.Font("Gill Sans MT", 0, 24)); // NOI18N
+        lblExit.setForeground(new java.awt.Color(255, 255, 255));
+        lblExit.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/exit.png"))); // NOI18N
+        lblExit.setText("Exit");
+        lblExit.setIconTextGap(20);
+        lblExit.setMaximumSize(new java.awt.Dimension(250, 80));
+        lblExit.setMinimumSize(new java.awt.Dimension(250, 80));
+        lblExit.setPreferredSize(new java.awt.Dimension(250, 80));
+        pnlExitButton.add(lblExit);
+
+        sidePnl.add(pnlExitButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 461, 250, 80));
+
+        getContentPane().add(sidePnl, java.awt.BorderLayout.LINE_START);
+
+        pnlTitle.setBackground(new java.awt.Color(18, 38, 58));
+        pnlTitle.setMinimumSize(new java.awt.Dimension(100, 150));
+        pnlTitle.setPreferredSize(new java.awt.Dimension(1043, 160));
+        pnlTitle.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnMinimise.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnMinimise.setForeground(new java.awt.Color(255, 255, 255));
+        btnMinimise.setText("_");
+        btnMinimise.setBorder(null);
+        btnMinimise.setBorderPainted(false);
+        btnMinimise.setContentAreaFilled(false);
+        btnMinimise.setMaximumSize(new java.awt.Dimension(65, 41));
+        btnMinimise.setMinimumSize(new java.awt.Dimension(65, 41));
+        btnMinimise.setPreferredSize(new java.awt.Dimension(65, 41));
+        btnMinimise.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMinimiseActionPerformed(evt);
+            }
+        });
+        pnlTitle.add(btnMinimise, new org.netbeans.lib.awtextra.AbsoluteConstraints(908, 0, 70, 40));
+
+        lblTitle.setFont(new java.awt.Font("Gill Sans MT", 0, 36)); // NOI18N
+        lblTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblTitle.setText("Dengue Case 2014 - 2019 Report");
+        pnlTitle.add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, -1, -1));
+
+        btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/close.png"))); // NOI18N
+        btnClose.setBorder(null);
+        btnClose.setContentAreaFilled(false);
+        btnClose.setMaximumSize(new java.awt.Dimension(65, 41));
+        btnClose.setMinimumSize(new java.awt.Dimension(65, 41));
+        btnClose.setPreferredSize(new java.awt.Dimension(65, 41));
+        btnClose.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exit(evt);
+            }
+        });
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
+        pnlTitle.add(btnClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(978, 0, -1, 40));
+
+        getContentPane().add(pnlTitle, java.awt.BorderLayout.PAGE_START);
+
+        pnlDisplay.setBackground(new java.awt.Color(78, 155, 166));
+        pnlDisplay.setLayout(new javax.swing.OverlayLayout(pnlDisplay));
+
+        pnlHomeDisplay.setBackground(new java.awt.Color(72, 142, 153));
+
+        javax.swing.table.JTableHeader totalOverallDengueCasesHeader = TblOverallDengueCases.getTableHeader();
+        totalOverallDengueCasesHeader.setForeground(Color.decode("#12263A"));
+        totalOverallDengueCasesHeader.setPreferredSize(new java.awt.Dimension(0, 42));
+        totalOverallDengueCasesHeader.setFont(new java.awt.Font("Gill Sans MT", 1, 20));
+        javax.swing.JLabel totalOverallDengueCasesHeaderLabel = (javax.swing.JLabel) totalOverallDengueCasesHeader.getDefaultRenderer();
+        //totalOverallDengueCasesHeaderLabel.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+        TblOverallDengueCases.setFont(new java.awt.Font("Gill Sans MT", 0, 18)); // NOI18N
+        TblOverallDengueCases.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "District", "2014", "2015", "2016", "2017", "2018", "2019"
+            }
+        ));
+        TblOverallDengueCases.setEditingColumn(0);
+        TblOverallDengueCases.setEditingRow(0);
+        TblOverallDengueCases.setEnabled(false);
+        TblOverallDengueCases.setGridColor(new java.awt.Color(18, 38, 58));
+        TblOverallDengueCases.setRowHeight(41);
+        TblOverallDengueCases.setRowMargin(0);
+        TblOverallDengueCases.setSelectionBackground(new java.awt.Color(166, 207, 213));
+        TblOverallDengueCases.setShowGrid(true);
+        TblOverallDengueCases.getTableHeader().setResizingAllowed(false);
+        TblOverallDengueCases.getTableHeader().setReorderingAllowed(false);
+        SpnHome.setViewportView(TblOverallDengueCases);
+
+        javax.swing.GroupLayout pnlHomeDisplayLayout = new javax.swing.GroupLayout(pnlHomeDisplay);
+        pnlHomeDisplay.setLayout(pnlHomeDisplayLayout);
+        pnlHomeDisplayLayout.setHorizontalGroup(
+            pnlHomeDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeDisplayLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(SpnHome, javax.swing.GroupLayout.PREFERRED_SIZE, 793, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        pnlHomeDisplayLayout.setVerticalGroup(
+            pnlHomeDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHomeDisplayLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(SpnHome, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        pnlDisplay.add(pnlHomeDisplay);
+
+        pnlStatisticsDisplay.setBackground(new java.awt.Color(72, 142, 153));
+
+        LblTotalDengueCasesPerArea.setFont(new java.awt.Font("Gill Sans MT", 0, 24)); // NOI18N
+        LblTotalDengueCasesPerArea.setText("Total Dengue Cases Per Area");
+
+        javax.swing.table.JTableHeader totalDengueCasesPerAreaHeader = TblTotalDengueCasesPerArea.getTableHeader();
+        totalDengueCasesPerAreaHeader.setForeground(Color.decode("#12263A"));
+        totalDengueCasesPerAreaHeader.setPreferredSize(new java.awt.Dimension(0, 42));
+        totalDengueCasesPerAreaHeader.setFont(new java.awt.Font("Gill Sans MT", 1, 18));
+        javax.swing.JLabel totalDengueCasesPerAreaHeaderLabel = (javax.swing.JLabel) totalDengueCasesPerAreaHeader.getDefaultRenderer();
+        //totalDengueCasesPerAreaHeaderLabel.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+        TblTotalDengueCasesPerArea.setFont(new java.awt.Font("Gill Sans MT", 0, 16)); // NOI18N
+        TblTotalDengueCasesPerArea.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "District", "Total Cases"
+            }
+        ));
+        TblTotalDengueCasesPerArea.setEditingColumn(0);
+        TblTotalDengueCasesPerArea.setEditingRow(0);
+        TblTotalDengueCasesPerArea.setEnabled(false);
+        TblTotalDengueCasesPerArea.setGridColor(new java.awt.Color(18, 38, 58));
+        TblTotalDengueCasesPerArea.setRowHeight(32);
+        TblTotalDengueCasesPerArea.setRowMargin(0);
+        TblTotalDengueCasesPerArea.setSelectionBackground(new java.awt.Color(166, 207, 213));
+        TblTotalDengueCasesPerArea.setShowGrid(true);
+        TblTotalDengueCasesPerArea.getTableHeader().setResizingAllowed(false);
+        TblTotalDengueCasesPerArea.getTableHeader().setReorderingAllowed(false);
+        SpnHome1.setViewportView(TblTotalDengueCasesPerArea);
+
+        LblAreaOfLowestDengueCasesTitle.setFont(new java.awt.Font("Gill Sans MT", 0, 24)); // NOI18N
+        LblAreaOfLowestDengueCasesTitle.setText("Area of Lowest Dengue Cases");
+
+        javax.swing.table.JTableHeader areaOfLowestDengueCasesHeader = TblAreaOfLowestDengueCases.getTableHeader();
+        areaOfLowestDengueCasesHeader.setForeground(Color.decode("#12263A"));
+        areaOfLowestDengueCasesHeader.setPreferredSize(new java.awt.Dimension(0, 42));
+        areaOfLowestDengueCasesHeader.setFont(new java.awt.Font("Gill Sans MT", 1, 16));
+        javax.swing.JLabel areaOfLowestDengueCasesHeaderLabel = (javax.swing.JLabel) areaOfLowestDengueCasesHeader.getDefaultRenderer();
+        //totalDengueCasesPerAreaHeaderLabel.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+        TblAreaOfLowestDengueCases.setFont(new java.awt.Font("Gill Sans MT", 0, 16)); // NOI18N
+        TblAreaOfLowestDengueCases.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "District", "Total Cases"
+            }
+        ));
+        TblAreaOfLowestDengueCases.setEditingColumn(0);
+        TblAreaOfLowestDengueCases.setEditingRow(0);
+        TblAreaOfLowestDengueCases.setEnabled(false);
+        TblAreaOfLowestDengueCases.setGridColor(new java.awt.Color(18, 38, 58));
+        TblAreaOfLowestDengueCases.setRowHeight(30);
+        TblAreaOfLowestDengueCases.setRowMargin(0);
+        TblAreaOfLowestDengueCases.setSelectionBackground(new java.awt.Color(166, 207, 213));
+        TblAreaOfLowestDengueCases.setShowGrid(true);
+        TblAreaOfLowestDengueCases.getTableHeader().setResizingAllowed(false);
+        TblAreaOfLowestDengueCases.getTableHeader().setReorderingAllowed(false);
+        SpnHome2.setViewportView(TblAreaOfLowestDengueCases);
+
+        javax.swing.table.JTableHeader areaOfHighestDengueCasesHeader = TblAreaOfHighestDengueCases.getTableHeader();
+        areaOfHighestDengueCasesHeader.setForeground(Color.decode("#12263A"));
+        areaOfHighestDengueCasesHeader.setPreferredSize(new java.awt.Dimension(0, 42));
+        areaOfHighestDengueCasesHeader.setFont(new java.awt.Font("Gill Sans MT", 1, 16));
+        //javax.swing.JLabel areaOfLowestDengueCasesHeaderLabel = (javax.swing.JLabel) areaOfLowestDengueCasesHeader.getDefaultRenderer();
+        //totalDengueCasesPerAreaHeaderLabel.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+        TblAreaOfHighestDengueCases.setFont(new java.awt.Font("Gill Sans MT", 0, 16)); // NOI18N
+        TblAreaOfHighestDengueCases.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "District", "Total Cases"
+            }
+        ));
+        TblAreaOfHighestDengueCases.setEditingColumn(0);
+        TblAreaOfHighestDengueCases.setEditingRow(0);
+        TblAreaOfHighestDengueCases.setEnabled(false);
+        TblAreaOfHighestDengueCases.setGridColor(new java.awt.Color(18, 38, 58));
+        TblAreaOfHighestDengueCases.setRowHeight(30);
+        TblAreaOfHighestDengueCases.setRowMargin(0);
+        TblAreaOfHighestDengueCases.setSelectionBackground(new java.awt.Color(166, 207, 213));
+        TblAreaOfHighestDengueCases.setShowGrid(true);
+        TblAreaOfHighestDengueCases.getTableHeader().setResizingAllowed(false);
+        TblAreaOfHighestDengueCases.getTableHeader().setReorderingAllowed(false);
+        SpnHome3.setViewportView(TblAreaOfHighestDengueCases);
+
+        LblAreaOfHighestDengueCasesTitle.setFont(new java.awt.Font("Gill Sans MT", 0, 24)); // NOI18N
+        LblAreaOfHighestDengueCasesTitle.setText("Area of Highest Dengue Cases");
+
+        PnlSort.setBackground(new java.awt.Color(150, 34, 42));
+        PnlSort.setForeground(new java.awt.Color(255, 255, 255));
+        PnlSort.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                displaySortedDengueCasesPerArea(evt);
+            }
+        });
+        PnlSort.setLayout(new javax.swing.BoxLayout(PnlSort, javax.swing.BoxLayout.LINE_AXIS));
+
+        LblSort.setFont(new java.awt.Font("Gill Sans MT", 0, 22)); // NOI18N
+        LblSort.setForeground(new java.awt.Color(255, 255, 255));
+        LblSort.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LblSort.setText("Sort");
+        LblSort.setMaximumSize(new java.awt.Dimension(300, 50));
+        LblSort.setMinimumSize(new java.awt.Dimension(300, 50));
+        LblSort.setPreferredSize(new java.awt.Dimension(300, 50));
+        PnlSort.add(LblSort);
+
+        PnlReset.setBackground(new java.awt.Color(210, 55, 66));
+        PnlReset.setForeground(new java.awt.Color(255, 255, 255));
+        PnlReset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                displayOriginalTotalDengueCasesPerArea(evt);
+            }
+        });
+        PnlReset.setLayout(new javax.swing.BoxLayout(PnlReset, javax.swing.BoxLayout.LINE_AXIS));
+
+        LblReset.setFont(new java.awt.Font("Gill Sans MT", 0, 22)); // NOI18N
+        LblReset.setForeground(new java.awt.Color(255, 255, 255));
+        LblReset.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LblReset.setText("Reset");
+        LblReset.setMaximumSize(new java.awt.Dimension(300, 50));
+        LblReset.setMinimumSize(new java.awt.Dimension(300, 50));
+        LblReset.setPreferredSize(new java.awt.Dimension(300, 50));
+        PnlReset.add(LblReset);
+
+        javax.swing.GroupLayout pnlStatisticsDisplayLayout = new javax.swing.GroupLayout(pnlStatisticsDisplay);
+        pnlStatisticsDisplay.setLayout(pnlStatisticsDisplayLayout);
+        pnlStatisticsDisplayLayout.setHorizontalGroup(
+            pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlStatisticsDisplayLayout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(LblTotalDengueCasesPerArea, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(SpnHome1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
+                .addGroup(pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(LblAreaOfLowestDengueCasesTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                            .addComponent(SpnHome2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(LblAreaOfHighestDengueCasesTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(SpnHome3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                    .addComponent(PnlReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(PnlSort, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(44, 44, 44))
+        );
+        pnlStatisticsDisplayLayout.setVerticalGroup(
+            pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlStatisticsDisplayLayout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addGroup(pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LblTotalDengueCasesPerArea)
+                    .addComponent(LblAreaOfLowestDengueCasesTitle))
+                .addGap(26, 26, 26)
+                .addGroup(pnlStatisticsDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(pnlStatisticsDisplayLayout.createSequentialGroup()
+                        .addComponent(SpnHome2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(LblAreaOfHighestDengueCasesTitle)
+                        .addGap(26, 26, 26)
+                        .addComponent(SpnHome3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)
+                        .addComponent(PnlSort, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(PnlReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(SpnHome1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
+
+        pnlDisplay.add(pnlStatisticsDisplay);
+
+        getContentPane().add(pnlDisplay, java.awt.BorderLayout.CENTER);
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnMinimiseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinimiseActionPerformed
+        // TODO add your handling code here:
+        setState(Frame.ICONIFIED);
+    }//GEN-LAST:event_btnMinimiseActionPerformed
+
+    private void exit(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exit
+        // TODO add your handling code here:
+        pnlHomeButton.setBackground(Color.decode("#D23742"));
+        pnlStatisticsButton.setBackground(Color.decode("#D23742"));
+        pnlExitButton.setBackground(Color.decode("#96222A"));
+        System.exit(0);
+    }//GEN-LAST:event_exit
+
+    private void redirectStatistics(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_redirectStatistics
+        // TODO add your handling code here:
+        pnlHomeButton.setBackground(Color.decode("#D23742"));
+        pnlStatisticsButton.setBackground(Color.decode("#96222A"));
+        pnlExitButton.setBackground(Color.decode("#D23742"));
+        pnlHomeDisplay.setVisible(false);
+        pnlStatisticsDisplay.setVisible(true);
+    }//GEN-LAST:event_redirectStatistics
+
+    private void redirectHome(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_redirectHome
+        // TODO add your handling code here:
+        pnlHomeButton.setBackground(Color.decode("#96222A"));
+        pnlStatisticsButton.setBackground(Color.decode("#D23742"));
+        pnlExitButton.setBackground(Color.decode("#D23742"));
+        pnlHomeDisplay.setVisible(true);
+        pnlStatisticsDisplay.setVisible(false);
+    }//GEN-LAST:event_redirectHome
+    
+    private void displaySortedDengueCasesPerArea(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displaySortedDengueCasesPerArea
+        try {
+            DefaultTableModel totalDengueCasesPerAreaTableModel = 
+                    (DefaultTableModel) TblTotalDengueCasesPerArea.getModel();
+            PnlSort.setBackground(Color.decode("#96222A"));
+            PnlReset.setBackground(Color.decode("#D23743"));
+            totalDengueCasesPerAreaTableModel.setRowCount(0);
+            PrologConnection prologConnection = new PrologConnection(PROLOG_FILE_PATH);
+            prologConnection.consult();
+            Map<String, Integer> sortedDengueCasesPerAreaMap = 
+                    prologConnection.sort(totalDengueCasesPerArea);
+            sortedDengueCasesPerAreaMap
+                .entrySet()
+                .stream()
+                .forEach(dengueCasesPerArea -> 
+                    totalDengueCasesPerAreaTableModel.addRow(
+                            new Object[]{
+                                dengueCasesPerArea
+                                    .getKey()
+                                    .substring(0, 1)
+                                    .toUpperCase() 
+                                        + dengueCasesPerArea
+                                            .getKey()
+                                            .substring(1), 
+                                dengueCasesPerArea.getValue()
+                            }
+                    )
+                );
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_displaySortedDengueCasesPerArea
+
+    private void displayOriginalTotalDengueCasesPerArea(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayOriginalTotalDengueCasesPerArea
+        displayTotalDengueCasesPerArea();
+    }//GEN-LAST:event_displayOriginalTotalDengueCasesPerArea
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(DengueCaseReportSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(DengueCaseReportSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(DengueCaseReportSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(DengueCaseReportSystem.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new DengueCaseReportSystem().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel LblAreaOfHighestDengueCasesTitle;
+    private javax.swing.JLabel LblAreaOfLowestDengueCasesTitle;
+    private javax.swing.JLabel LblReset;
+    private javax.swing.JLabel LblSort;
+    private javax.swing.JLabel LblTotalDengueCasesPerArea;
+    private javax.swing.JPanel PnlReset;
+    private javax.swing.JPanel PnlSort;
+    private javax.swing.JScrollPane SpnHome;
+    private javax.swing.JScrollPane SpnHome1;
+    private javax.swing.JScrollPane SpnHome2;
+    private javax.swing.JScrollPane SpnHome3;
+    private javax.swing.JTable TblAreaOfHighestDengueCases;
+    private javax.swing.JTable TblAreaOfLowestDengueCases;
+    private javax.swing.JTable TblOverallDengueCases;
+    private javax.swing.JTable TblTotalDengueCasesPerArea;
+    private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnMinimise;
+    private javax.swing.JLabel lblExit;
+    private javax.swing.JLabel lblHome;
+    private javax.swing.JLabel lblStatistics;
+    private javax.swing.JLabel lblTitle;
+    private javax.swing.JPanel pnlDisplay;
+    private javax.swing.JPanel pnlExitButton;
+    private javax.swing.JPanel pnlHomeButton;
+    private javax.swing.JPanel pnlHomeDisplay;
+    private javax.swing.JPanel pnlStatisticsButton;
+    private javax.swing.JPanel pnlStatisticsDisplay;
+    private javax.swing.JPanel pnlTitle;
+    private javax.swing.JPanel sidePnl;
+    // End of variables declaration//GEN-END:variables
+}
